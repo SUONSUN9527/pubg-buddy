@@ -84,15 +84,21 @@ PUBG Buddy 是一个基于 **PUBG 官方 API** 的本地桌面助手,单体 Elec
 
 ## 🚀 快速开始
 
+**零环境?Windows 直接双击 [`一键启动.bat`](一键启动.bat)** —— 自动检测并安装 Node.js(winget)→ 自动装依赖 → 启动应用,全程无需命令行。
+
+已有 Node 环境的话,命令行方式:
+
 ```bash
 git clone https://github.com/SUONSUN9527/pubg-buddy.git && cd pubg-buddy
 npm install          # 自动 rebuild better-sqlite3
 npm run dev          # 启动(dev 端口固定 5199)
 ```
 
-1. 到 [developer.pubg.com](https://developer.pubg.com) 免费申请 API Key(默认限流 10 次/分钟,本项目的缓存设计足够用)
+1. 到 [developer.pubg.com](https://developer.pubg.com) **免费**申请 API Key(默认限流 10 次/分钟,本项目的缓存设计足够用)
 2. 打开 App → 设置页 → 填入 Key 并验证、绑定自己的游戏昵称
 3. 完成。查询、仪表盘、赛后通知、浮窗全部可用
+
+> 💰 **完全免费**:PUBG 官方 API 免费、地图素材来自官方公开仓库、无任何付费第三方服务,零运行成本。
 
 > 主要功能面向 **Windows 10/11**;纯桌面部分(查询 / 分析 / 标记编辑)在 macOS 上也能开发运行。
 > 单测:`npm test` · 类型检查:`npm run typecheck`
@@ -151,15 +157,21 @@ Single Electron app, no separate backend. The main process **is** the backend: P
 
 ## 🚀 Quick start
 
+**No dev environment? On Windows just double-click [`一键启动.bat`](一键启动.bat)** — it auto-installs Node.js via winget, installs dependencies and launches the app. No terminal needed.
+
+Or the classic way if you already have Node:
+
 ```bash
 git clone https://github.com/SUONSUN9527/pubg-buddy.git && cd pubg-buddy
 npm install
 npm run dev
 ```
 
-1. Grab a free API key at [developer.pubg.com](https://developer.pubg.com) (the default 10 RPM limit is plenty thanks to aggressive caching)
+1. Grab a **free** API key at [developer.pubg.com](https://developer.pubg.com) (the default 10 RPM limit is plenty thanks to aggressive caching)
 2. Open Settings → paste the key, verify, and bind your in-game name
 3. Done — search, dashboard, post-match notifications and overlays are all live
+
+> 💰 **Completely free to run**: the official PUBG API is free, map assets come from the official public repo, and there are no paid third-party services.
 
 > Primary target is **Windows 10/11**; the pure-desktop parts also run on macOS for development. Tests: `npm test` · Typecheck: `npm run typecheck`
 
