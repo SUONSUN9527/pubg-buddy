@@ -1,0 +1,106 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #0e1116; /* 深夜战术屏 */
+  --color-panel: #151b23;
+  --color-panel2: #1a222c;
+  --color-line: #232b36;
+  --color-ink: #e6edf3;
+  --color-mut: #8b98a5;
+  --color-drop: #f2a33c; /* 空投橙:全站唯一强调色 */
+  --color-danger: #e5534b;
+  --color-ok: #57ab5a;
+  --font-hud: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+input,
+textarea {
+  user-select: text;
+}
+
+/* HUD 读数卡:细边框 + 对角角标,数字用等宽字体 —— 本应用的签名元素 */
+.hud-card {
+  position: relative;
+  background: var(--color-panel);
+  border: 1px solid var(--color-line);
+}
+.hud-card::before,
+.hud-card::after {
+  content: '';
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  pointer-events: none;
+  border-style: solid;
+  border-color: #3a4553;
+}
+.hud-card::before {
+  top: -1px;
+  left: -1px;
+  border-width: 1px 0 0 1px;
+}
+.hud-card::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 1px 1px 0;
+}
+.hud-card--hot::before,
+.hud-card--hot::after {
+  border-color: var(--color-drop);
+}
+
+.hud-num {
+  font-family: var(--font-hud);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-mut);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-drop);
+  outline-offset: 2px;
+}
+
+/* Leaflet 深色适配 */
+.leaflet-container {
+  background: #10151c;
+  font-family: inherit;
+}
+.leaflet-bar a {
+  background: var(--color-panel);
+  color: var(--color-ink);
+  border-color: var(--color-line);
+}
+.leaflet-bar a:hover {
+  background: var(--color-panel2);
+}
+.leaflet-tooltip {
+  background: var(--color-panel);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
