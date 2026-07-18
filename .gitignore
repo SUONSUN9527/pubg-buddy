@@ -11,3 +11,4 @@ dist/
 # 社区攻略图为第三方版权内容,仅本地使用,不随仓库分发
 community-maps/
 *.tsbuildinfo
+release/
