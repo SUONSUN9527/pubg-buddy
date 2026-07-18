@@ -1,0 +1,38 @@
+# 打 tag(v*)自动在 Windows 环境构建安装包并发布到 Releases
+# 只使用 GitHub 内置 GITHUB_TOKEN,不涉及任何自定义密钥
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 类型检查与单测
+        run: |
+          npm run typecheck
+          npm test
+
+      - name: 构建 Windows 安装包(NSIS + 免安装版)
+        run: npm run dist
+
+      - name: 发布到 Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*.exe
+          generate_release_notes: true

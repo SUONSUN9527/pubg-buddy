@@ -84,9 +84,11 @@ PUBG Buddy 是一个基于 **PUBG 官方 API** 的本地桌面助手,单体 Elec
 
 ## 🚀 快速开始
 
-**零环境?Windows 直接双击 [`一键启动.bat`](一键启动.bat)** —— 自动检测并安装 Node.js(winget)→ 自动装依赖 → 启动应用,全程无需命令行。
+**方式一(最推荐,完全零门槛)**:到 [Releases](https://github.com/SUONSUN9527/pubg-buddy/releases) 下载 `PUBG-Buddy-Setup-x.x.x.exe`(安装版)或 `PUBG-Buddy-Portable-x.x.x.exe`(免安装版),双击即用——不需要 Node、不需要命令行、不需要任何开发环境。
 
-已有 Node 环境的话,命令行方式:
+**方式二(下载源码 ZIP)**:GitHub 页面点 `Code → Download ZIP`,解压后**双击 [`一键启动.bat`](一键启动.bat)**——脚本自动安装 Node.js(winget → 官网 → 国内镜像三级兜底)→ 自动装依赖(官方源失败自动切国内镜像)→ 启动。脚本只从官方/知名镜像源下载,不收集任何数据。
+
+**方式三(开发者)**:
 
 ```bash
 git clone https://github.com/SUONSUN9527/pubg-buddy.git && cd pubg-buddy
@@ -157,9 +159,11 @@ Single Electron app, no separate backend. The main process **is** the backend: P
 
 ## 🚀 Quick start
 
-**No dev environment? On Windows just double-click [`一键启动.bat`](一键启动.bat)** — it auto-installs Node.js via winget, installs dependencies and launches the app. No terminal needed.
+**Option 1 (recommended, zero setup)**: grab `PUBG-Buddy-Setup.exe` from [Releases](https://github.com/SUONSUN9527/pubg-buddy/releases) and double-click — no Node, no terminal, no dev environment.
 
-Or the classic way if you already have Node:
+**Option 2 (source ZIP)**: `Code → Download ZIP`, extract, then double-click [`一键启动.bat`](一键启动.bat) — it auto-installs Node.js (winget → nodejs.org → mirror fallbacks) and dependencies, then launches. Official sources only, no data collection.
+
+**Option 3 (developers)**:
 
 ```bash
 git clone https://github.com/SUONSUN9527/pubg-buddy.git && cd pubg-buddy

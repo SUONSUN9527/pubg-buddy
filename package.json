@@ -3,13 +3,39 @@
   "version": "0.1.0",
   "private": true,
   "description": "个人自用的 PUBG 桌面助手",
+  "author": "SUONSUN9527",
   "main": "out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
     "test": "vitest run",
+    "dist": "electron-vite build && electron-builder --win",
     "postinstall": "electron-rebuild -f -w better-sqlite3"
+  },
+  "build": {
+    "appId": "app.pubgbuddy",
+    "productName": "PUBG Buddy",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "out/**"
+    ],
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "artifactName": "PUBG-Buddy-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "PUBG-Buddy-Portable-${version}.${ext}"
+    }
   },
   "dependencies": {
     "@types/leaflet": "^1.9.21",
@@ -27,6 +53,7 @@
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "electron": "^33.0.0",
+    "electron-builder": "^26.15.3",
     "electron-vite": "^3.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
