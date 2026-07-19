@@ -11,7 +11,9 @@ permissions:
 
 jobs:
   windows:
-    runs-on: windows-latest
+    # 固定 2022:windows-latest(2025)预装的 VS 18 尚不被 node-gyp 识别,
+    # 会导致 better-sqlite3 原生模块编译失败
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
 
