@@ -4,6 +4,7 @@ import { api } from '../../api'
 import MapCanvas from '../../components/MapCanvas'
 import { MARKER_META, MARKER_TYPES } from '../../lib/markers'
 import { useMapImage } from '../../lib/useMapImage'
+import { useOverlayControls } from '../../lib/useOverlayControls'
 import { MAP_NAMES, mapDisplayName } from '@shared/maps'
 import type { MarkerType } from '@shared/types'
 
@@ -29,6 +30,7 @@ export default function MapOverlay() {
 
   const markers = useQuery({ queryKey: ['markers', mapId], queryFn: () => api.marker.list(mapId) })
   const img = useMapImage(mapId)
+  const { collapsed, locked, toggleCollapsed, toggleLocked, pinRef } = useOverlayControls()
 
   const allOn = visible.size === MARKER_TYPES.length
   const toggleAll = () => setVisible(allOn ? new Set() : new Set(MARKER_TYPES))
@@ -42,15 +44,32 @@ export default function MapOverlay() {
   // 只给当前地图有标记的类型显示开关,减少噪音
   const presentTypes = MARKER_TYPES.filter((t) => markers.data?.some((m) => m.type === t))
 
+  // 收起态:只剩一个小图标,点击展开
+  if (collapsed) {
+    return (
+      <button
+        onClick={toggleCollapsed}
+        title="展开地图标记浮窗"
+        className="flex h-11 w-11 items-center justify-center rounded-md border border-drop/70 bg-panel/90 text-xl backdrop-blur-sm"
+      >
+        🗺️
+      </button>
+    )
+  }
+
   return (
-    <div className="flex h-screen flex-col overflow-hidden rounded-md border border-line bg-panel/90 backdrop-blur-sm">
-      <div style={drag} className="flex cursor-move items-center gap-2 border-b border-line px-3 py-1.5">
+    <div
+      className={`flex h-screen flex-col overflow-hidden rounded-md border bg-panel/90 backdrop-blur-sm ${
+        locked ? 'border-drop/70' : 'border-line'
+      }`}
+    >
+      <div style={locked ? undefined : drag} className="flex cursor-move items-center gap-2 border-b border-line px-3 py-1.5">
         <span className="eyebrow shrink-0 text-drop">地图标记</span>
         <select
           style={noDrag}
           value={mapId}
           onChange={(e) => setMapId(e.target.value)}
-          className="rounded-sm border border-line bg-panel px-2 py-0.5 text-xs"
+          className={`rounded-sm border border-line bg-panel px-2 py-0.5 text-xs ${locked ? 'opacity-40' : ''}`}
         >
           {OVERLAY_MAPS.map((id) => (
             <option key={id} value={id}>
@@ -58,10 +77,30 @@ export default function MapOverlay() {
             </option>
           ))}
         </select>
+        <span className="ml-auto" />
+        <button
+          ref={pinRef}
+          style={noDrag}
+          onClick={toggleLocked}
+          title={locked ? '取消固定(恢复可操作)' : '固定:鼠标穿透,防误触'}
+          className={`rounded-sm px-1.5 text-sm leading-none transition-colors ${
+            locked ? 'bg-drop/25 text-drop' : 'text-mut hover:text-ink'
+          }`}
+        >
+          📌
+        </button>
+        <button
+          style={noDrag}
+          onClick={toggleCollapsed}
+          title="收起为小图标"
+          className={`px-1 text-base leading-none text-mut transition-colors hover:text-ink ${locked ? 'opacity-40' : ''}`}
+        >
+          –
+        </button>
         <button
           style={noDrag}
           onClick={() => window.close()}
-          className="ml-auto px-1 text-mut transition-colors hover:text-danger"
+          className={`px-1 text-mut transition-colors hover:text-danger ${locked ? 'opacity-40' : ''}`}
           aria-label="关闭浮窗"
         >
           ×

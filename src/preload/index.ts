@@ -50,6 +50,10 @@ const api: Api = {
   overlay: {
     toggle: (kind) => call(CHANNELS.overlayToggle, kind)
   },
+  overlayWin: {
+    setCollapsed: (collapsed) => call(CHANNELS.overlayWinCollapse, collapsed),
+    setIgnoreMouse: (ignore) => call(CHANNELS.overlayWinIgnoreMouse, ignore)
+  },
   marker: {
     list: (mapId) => call(CHANNELS.markerList, mapId),
     save: (m) => call(CHANNELS.markerSave, m),

@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react'
 import { api } from '../../api'
+import { useOverlayControls } from '../../lib/useOverlayControls'
 import type { HudRosterEvent } from '@shared/types'
 
 const drag: CSSProperties = { WebkitAppRegion: 'drag' } as CSSProperties
@@ -8,6 +9,7 @@ const noDrag: CSSProperties = { WebkitAppRegion: 'no-drag' } as CSSProperties
 /** 独立浮窗二:队伍存活面板 —— 极致紧凑:5 列小格,数字 + 存活点 */
 export default function TeamsOverlay() {
   const [snap, setSnap] = useState<HudRosterEvent | null>(null)
+  const { collapsed, locked, toggleCollapsed, toggleLocked, pinRef } = useOverlayControls()
 
   useEffect(() => {
     document.documentElement.style.background = 'transparent'
@@ -20,17 +22,56 @@ export default function TeamsOverlay() {
   const aliveTotal = snap?.teams.reduce((s, t) => s + t.alive, 0) ?? 0
   const aliveTeams = snap?.teams.filter((t) => t.alive > 0).length ?? 0
 
+  // 收起态:只剩一个小图标(带存活人数角标),点击展开
+  if (collapsed) {
+    return (
+      <button
+        onClick={toggleCollapsed}
+        title="展开队伍存活浮窗"
+        className="relative flex h-11 w-11 items-center justify-center rounded-md border border-drop/70 bg-panel/90 text-xl backdrop-blur-sm"
+      >
+        ⚔️
+        {snap && (
+          <span className="hud-num absolute -bottom-0.5 right-0.5 text-[9px] leading-none text-drop">{aliveTotal}</span>
+        )}
+      </button>
+    )
+  }
+
   return (
-    <div className="flex h-screen flex-col overflow-hidden rounded border border-line/70 bg-panel/80 backdrop-blur-sm">
-      <div style={drag} className="flex cursor-move items-center gap-2 px-2 py-1">
+    <div
+      className={`flex h-screen flex-col overflow-hidden rounded border bg-panel/80 backdrop-blur-sm ${
+        locked ? 'border-drop/70' : 'border-line/70'
+      }`}
+    >
+      <div style={locked ? undefined : drag} className="flex cursor-move items-center gap-1.5 px-2 py-1">
         <span className="text-[10px] tracking-[0.14em] text-drop">队伍存活</span>
         <span className="hud-num ml-auto text-[10px] text-mut">
           {snap ? `${aliveTotal}人/${aliveTeams}队` : '待进局'}
         </span>
         <button
+          ref={pinRef}
+          style={noDrag}
+          onClick={toggleLocked}
+          title={locked ? '取消固定(恢复可操作)' : '固定:鼠标穿透,防误触'}
+          className={`rounded-sm px-1 text-[11px] leading-none transition-colors ${
+            locked ? 'bg-drop/25 text-drop' : 'text-mut hover:text-ink'
+          }`}
+        >
+          📌
+        </button>
+        <button
+          style={noDrag}
+          onClick={toggleCollapsed}
+          title="收起为小图标"
+          className={`px-0.5 text-xs leading-none text-mut transition-colors hover:text-ink ${locked ? 'opacity-40' : ''}`}
+        >
+          –
+        </button>
+        <button
           style={noDrag}
           onClick={() => window.close()}
-          className="px-0.5 text-xs leading-none text-mut transition-colors hover:text-danger"
+          className={`px-0.5 text-xs leading-none text-mut transition-colors hover:text-danger ${locked ? 'opacity-40' : ''}`}
           aria-label="关闭浮窗"
         >
           ×

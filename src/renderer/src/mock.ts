@@ -300,6 +300,10 @@ export const mockApi: Api = {
       throw new Error('独立浮窗需要在桌面 App 中打开(预览模式没有主进程)')
     }
   },
+  overlayWin: {
+    async setCollapsed() {},
+    async setIgnoreMouse() {}
+  },
   marker: {
     async list(mapId) {
       return [...(mockMarkers.get(mapId) ?? [])]

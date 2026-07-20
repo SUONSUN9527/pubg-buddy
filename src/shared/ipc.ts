@@ -63,6 +63,13 @@ export interface Api {
     /** 开/关某个独立浮窗,返回切换后的状态 */
     toggle(kind: OverlayKind): Promise<boolean>
   }
+  /** 浮窗窗口自身的控制(由浮窗页面调用,作用于发送方窗口) */
+  overlayWin: {
+    /** 收起为小图标 / 恢复原尺寸 */
+    setCollapsed(collapsed: boolean): Promise<void>
+    /** 鼠标穿透开关(固定模式);forward 模式下 mousemove 仍到达页面,用于豁免固定按钮 */
+    setIgnoreMouse(ignore: boolean): Promise<void>
+  }
   marker: {
     list(mapId: string): Promise<MapMarker[]>
     save(m: { mapId: string; type: MarkerType; x: number; y: number; note?: string | null }): Promise<MapMarker>
@@ -104,6 +111,8 @@ export const CHANNELS = {
   hudSnapshot: 'hud:snapshot',
   mapimgGet: 'mapimg:get',
   overlayToggle: 'overlay:toggle',
+  overlayWinCollapse: 'overlaywin:setCollapsed',
+  overlayWinIgnoreMouse: 'overlaywin:setIgnoreMouse',
   markerList: 'marker:list',
   markerSave: 'marker:save',
   markerRemove: 'marker:remove',

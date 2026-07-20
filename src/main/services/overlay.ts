@@ -53,6 +53,9 @@ export class OverlayManager {
       }
     })
     win.setAlwaysOnTop(true, 'screen-saver')
+    // 供"收起/展开"恢复最小尺寸约束
+    ;(win as BrowserWindow & { __minSize?: [number, number] }).__minSize =
+      kind === 'teams' ? [200, 110] : [380, 380]
     if (process.env.ELECTRON_RENDERER_URL) {
       void win.loadURL(`${process.env.ELECTRON_RENDERER_URL}#${cfg.route}`)
     } else {
