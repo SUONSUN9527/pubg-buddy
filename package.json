@@ -1,6 +1,6 @@
 {
   "name": "pubg-buddy",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "个人自用的 PUBG 桌面助手",
   "author": "SUONSUN9527",
@@ -24,8 +24,18 @@
     ],
     "win": {
       "target": [
-        { "target": "nsis", "arch": ["x64"] },
-        { "target": "portable", "arch": ["x64"] }
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
       ]
     },
     "nsis": {
