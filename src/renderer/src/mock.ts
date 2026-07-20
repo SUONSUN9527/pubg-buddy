@@ -302,7 +302,11 @@ export const mockApi: Api = {
   },
   overlayWin: {
     async setCollapsed() {},
-    async setIgnoreMouse() {}
+    async setIgnoreMouse() {},
+    async getPosition() {
+      return { x: 0, y: 0 }
+    },
+    async setPosition() {}
   },
   marker: {
     async list(mapId) {

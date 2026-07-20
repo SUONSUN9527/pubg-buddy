@@ -127,7 +127,7 @@ export function registerIpc(deps: IpcDeps): void {
   type OverlayWin = BrowserWindow & { __normalBounds?: Electron.Rectangle; __minSize?: [number, number] }
   const senderWin = (e: IpcMainInvokeEvent) => BrowserWindow.fromWebContents(e.sender) as OverlayWin | null
 
-  const CHIP = 48 // 收起后的小图标尺寸
+  const CHIP = 36 // 收起后的小图标尺寸
   ipcMain.handle(CHANNELS.overlayWinCollapse, (e, collapsed: boolean): Envelope<undefined> => {
     const win = senderWin(e)
     if (!win) return { ok: false, error: { code: 'UNKNOWN', message: '找不到发送方窗口' } }
@@ -150,6 +150,20 @@ export function registerIpc(deps: IpcDeps): void {
     if (!win) return { ok: false, error: { code: 'UNKNOWN', message: '找不到发送方窗口' } }
     // forward: true 让 mousemove 依然到达页面,页面据此在悬停固定按钮时临时解除穿透
     win.setIgnoreMouseEvents(ignore, { forward: true })
+    return { ok: true, data: undefined }
+  })
+
+  ipcMain.handle(CHANNELS.overlayWinGetPosition, (e): Envelope<{ x: number; y: number }> => {
+    const win = senderWin(e)
+    if (!win) return { ok: false, error: { code: 'UNKNOWN', message: '找不到发送方窗口' } }
+    const [x, y] = win.getPosition()
+    return { ok: true, data: { x, y } }
+  })
+
+  ipcMain.handle(CHANNELS.overlayWinSetPosition, (e, x: number, y: number): Envelope<undefined> => {
+    const win = senderWin(e)
+    if (!win) return { ok: false, error: { code: 'UNKNOWN', message: '找不到发送方窗口' } }
+    win.setPosition(Math.round(x), Math.round(y))
     return { ok: true, data: undefined }
   })
 

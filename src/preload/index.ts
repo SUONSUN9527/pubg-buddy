@@ -52,7 +52,9 @@ const api: Api = {
   },
   overlayWin: {
     setCollapsed: (collapsed) => call(CHANNELS.overlayWinCollapse, collapsed),
-    setIgnoreMouse: (ignore) => call(CHANNELS.overlayWinIgnoreMouse, ignore)
+    setIgnoreMouse: (ignore) => call(CHANNELS.overlayWinIgnoreMouse, ignore),
+    getPosition: () => call(CHANNELS.overlayWinGetPosition),
+    setPosition: (x, y) => call(CHANNELS.overlayWinSetPosition, x, y)
   },
   marker: {
     list: (mapId) => call(CHANNELS.markerList, mapId),

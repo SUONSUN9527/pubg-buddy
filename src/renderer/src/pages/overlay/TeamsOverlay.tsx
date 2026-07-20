@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react'
 import { api } from '../../api'
+import OverlayChip from '../../components/OverlayChip'
 import { CloseIcon, MinusIcon, PinIcon, TeamsIcon } from '../../components/icons'
 import { useOverlayControls } from '../../lib/useOverlayControls'
 import type { HudRosterEvent } from '@shared/types'
@@ -26,19 +27,22 @@ export default function TeamsOverlay() {
   // 固定态:除固定按钮外全部禁用鼠标(CSS 层兜底;Electron 下另有系统级穿透)
   const lockCls = locked ? 'pointer-events-none opacity-40' : ''
 
-  // 收起态:只剩一个小图标(带存活人数角标),点击展开
+  // 收起态:小圆徽章(带存活人数角标),可拖动,原地点击展开
   if (collapsed) {
     return (
-      <button
-        onClick={toggleCollapsed}
-        title="展开队伍存活浮窗"
-        className="relative flex h-11 w-11 items-center justify-center rounded-md border border-drop/70 bg-panel/90 text-drop backdrop-blur-sm"
+      <OverlayChip
+        title="拖动移动 · 点击展开队伍存活"
+        onExpand={toggleCollapsed}
+        badge={
+          snap ? (
+            <span className="hud-num absolute -bottom-px right-0 rounded-full bg-panel px-0.5 text-[8px] leading-[10px] text-drop">
+              {aliveTotal}
+            </span>
+          ) : undefined
+        }
       >
-        <TeamsIcon />
-        {snap && (
-          <span className="hud-num absolute -bottom-0.5 right-0.5 text-[9px] leading-none text-drop">{aliveTotal}</span>
-        )}
-      </button>
+        <TeamsIcon size={15} />
+      </OverlayChip>
     )
   }
 

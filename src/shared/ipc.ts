@@ -69,6 +69,9 @@ export interface Api {
     setCollapsed(collapsed: boolean): Promise<void>
     /** 鼠标穿透开关(固定模式);forward 模式下 mousemove 仍到达页面,用于豁免固定按钮 */
     setIgnoreMouse(ignore: boolean): Promise<void>
+    /** 收起态小图标的手动拖拽用 */
+    getPosition(): Promise<{ x: number; y: number }>
+    setPosition(x: number, y: number): Promise<void>
   }
   marker: {
     list(mapId: string): Promise<MapMarker[]>
@@ -113,6 +116,8 @@ export const CHANNELS = {
   overlayToggle: 'overlay:toggle',
   overlayWinCollapse: 'overlaywin:setCollapsed',
   overlayWinIgnoreMouse: 'overlaywin:setIgnoreMouse',
+  overlayWinGetPosition: 'overlaywin:getPosition',
+  overlayWinSetPosition: 'overlaywin:setPosition',
   markerList: 'marker:list',
   markerSave: 'marker:save',
   markerRemove: 'marker:remove',

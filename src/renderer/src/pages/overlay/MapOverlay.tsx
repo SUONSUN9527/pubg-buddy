@@ -2,6 +2,7 @@ import { useEffect, useState, type CSSProperties } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../../api'
 import MapCanvas from '../../components/MapCanvas'
+import OverlayChip from '../../components/OverlayChip'
 import { CloseIcon, MapIcon, MinusIcon, PinIcon } from '../../components/icons'
 import { MARKER_META, MARKER_TYPES } from '../../lib/markers'
 import { useMapImage } from '../../lib/useMapImage'
@@ -48,16 +49,12 @@ export default function MapOverlay() {
   // 固定态:除固定按钮外全部禁用鼠标(CSS 层兜底;Electron 下另有系统级穿透)
   const lockCls = locked ? 'pointer-events-none opacity-40' : ''
 
-  // 收起态:只剩一个小图标,点击展开
+  // 收起态:小圆徽章,可拖动,原地点击展开
   if (collapsed) {
     return (
-      <button
-        onClick={toggleCollapsed}
-        title="展开地图标记浮窗"
-        className="flex h-11 w-11 items-center justify-center rounded-md border border-drop/70 bg-panel/90 text-drop backdrop-blur-sm"
-      >
-        <MapIcon />
-      </button>
+      <OverlayChip title="拖动移动 · 点击展开地图标记" onExpand={toggleCollapsed}>
+        <MapIcon size={16} />
+      </OverlayChip>
     )
   }
 
