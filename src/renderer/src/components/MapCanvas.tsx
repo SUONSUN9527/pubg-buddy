@@ -42,6 +42,8 @@ export default function MapCanvas({ mapId, imageUrl, markers = [], points = [], 
   const mapRef = useRef<L.Map | null>(null)
   const overlayRef = useRef<L.ImageOverlay | null>(null)
   const layerRef = useRef<L.LayerGroup | null>(null)
+  const fittingRef = useRef(false)
+  const userTouchedRef = useRef(false)
   const [imgFailed, setImgFailed] = useState(false)
 
   useEffect(() => setImgFailed(false), [mapId, imageUrl])
@@ -49,22 +51,34 @@ export default function MapCanvas({ mapId, imageUrl, markers = [], points = [], 
   useEffect(() => {
     const map = L.map(divRef.current!, {
       crs: L.CRS.Simple,
-      minZoom: -2,
+      minZoom: -4,
       maxZoom: 3,
       // 连续缩放:fitBounds 精确贴合容器,不因缩放档位取整留出大片黑边
       zoomSnap: 0,
       zoomDelta: 0.5,
       attributionControl: false
     })
-    map.fitBounds([
-      [0, 0],
-      [SIZE, SIZE]
-    ])
+    const fit = () => {
+      fittingRef.current = true
+      map.fitBounds([
+        [0, 0],
+        [SIZE, SIZE]
+      ])
+      setTimeout(() => (fittingRef.current = false), 80)
+    }
+    fit()
+    // 区分"程序适配"与"用户手动缩放/拖动":用户动过之后 resize 不再强行重置视野
+    map.on('zoomstart dragstart', () => {
+      if (!fittingRef.current) userTouchedRef.current = true
+    })
     layerRef.current = L.layerGroup().addTo(map)
     mapRef.current = map
 
-    // 容器尺寸变化时刷新,避免 Leaflet 经典的"空白地图"问题
-    const observer = new ResizeObserver(() => map.invalidateSize())
+    // 容器尺寸变化(浮窗拉伸、初始化时容器从 0 变为实际尺寸)→ 刷新并按需重新适配
+    const observer = new ResizeObserver(() => {
+      map.invalidateSize()
+      if (!userTouchedRef.current) fit()
+    })
     observer.observe(divRef.current!)
     return () => {
       observer.disconnect()
@@ -132,5 +146,11 @@ export default function MapCanvas({ mapId, imageUrl, markers = [], points = [], 
     }
   }, [markers, points, visibleTypes])
 
-  return <div ref={divRef} className={className ?? 'h-[520px] w-full'} />
+  // 外层归 React 管(动态 className 如 pointer-events);内层固定类名交给 Leaflet,
+  // 避免 React 重渲染时把 Leaflet 挂在元素上的类(leaflet-container 等)整体抹掉
+  return (
+    <div className={className ?? 'h-[520px] w-full'}>
+      <div ref={divRef} className="h-full w-full" />
+    </div>
+  )
 }

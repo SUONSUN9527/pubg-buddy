@@ -41,6 +41,8 @@ export class OverlayManager {
       minHeight: kind === 'teams' ? 110 : 380,
       frame: false,
       transparent: true,
+      // 显式全透明背景:规避 macOS 透明窗口在 setBounds 缩放后变白底的已知问题
+      backgroundColor: '#00000000',
       resizable: true,
       skipTaskbar: true,
       hasShadow: false,
@@ -53,6 +55,9 @@ export class OverlayManager {
       }
     })
     win.setAlwaysOnTop(true, 'screen-saver')
+    // 供"收起/展开"恢复最小尺寸约束
+    ;(win as BrowserWindow & { __minSize?: [number, number] }).__minSize =
+      kind === 'teams' ? [200, 110] : [380, 380]
     if (process.env.ELECTRON_RENDERER_URL) {
       void win.loadURL(`${process.env.ELECTRON_RENDERER_URL}#${cfg.route}`)
     } else {

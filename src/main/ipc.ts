@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron'
+import { BrowserWindow, ipcMain, type IpcMainInvokeEvent } from 'electron'
 import log from 'electron-log/main'
 import { CHANNELS, type Envelope } from '@shared/ipc'
 import type { SettingsShape } from '@shared/types'
@@ -123,6 +123,54 @@ export function registerIpc(deps: IpcDeps): void {
     CHANNELS.overlayToggle,
     wrap((kind: OverlayKind) => overlay.toggle(kind))
   )
+  // ---- 浮窗窗口自身控制:作用于消息发送方所在窗口 ----
+  type OverlayWin = BrowserWindow & { __normalBounds?: Electron.Rectangle; __minSize?: [number, number] }
+  const senderWin = (e: IpcMainInvokeEvent) => BrowserWindow.fromWebContents(e.sender) as OverlayWin | null
+
+  const CHIP = 36 // 收起后的小图标尺寸
+  ipcMain.handle(CHANNELS.overlayWinCollapse, (e, collapsed: boolean): Envelope<undefined> => {
+    const win = senderWin(e)
+    if (!win) return { ok: false, error: { code: 'UNKNOWN', message: '找不到发送方窗口' } }
+    const { x, y } = win.getBounds()
+    if (collapsed) {
+      win.__normalBounds = win.getBounds()
+      win.setMinimumSize(CHIP, CHIP)
+      win.setBounds({ x, y, width: CHIP, height: CHIP })
+      win.setResizable(false) // 36px 小图标不该被拉伸,也规避透明窗口 resize 白底问题
+    } else {
+      win.setResizable(true)
+      const n = win.__normalBounds
+      if (n) win.setBounds({ x, y, width: n.width, height: n.height })
+      const [mw, mh] = win.__minSize ?? [CHIP, CHIP]
+      win.setMinimumSize(mw, mh)
+    }
+    // 缩放后重申全透明背景(macOS 上 setBounds 可能重置为白底)
+    win.setBackgroundColor('#00000000')
+    return { ok: true, data: undefined }
+  })
+
+  ipcMain.handle(CHANNELS.overlayWinIgnoreMouse, (e, ignore: boolean): Envelope<undefined> => {
+    const win = senderWin(e)
+    if (!win) return { ok: false, error: { code: 'UNKNOWN', message: '找不到发送方窗口' } }
+    // forward: true 让 mousemove 依然到达页面,页面据此在悬停固定按钮时临时解除穿透
+    win.setIgnoreMouseEvents(ignore, { forward: true })
+    return { ok: true, data: undefined }
+  })
+
+  ipcMain.handle(CHANNELS.overlayWinGetPosition, (e): Envelope<{ x: number; y: number }> => {
+    const win = senderWin(e)
+    if (!win) return { ok: false, error: { code: 'UNKNOWN', message: '找不到发送方窗口' } }
+    const [x, y] = win.getPosition()
+    return { ok: true, data: { x, y } }
+  })
+
+  ipcMain.handle(CHANNELS.overlayWinSetPosition, (e, x: number, y: number): Envelope<undefined> => {
+    const win = senderWin(e)
+    if (!win) return { ok: false, error: { code: 'UNKNOWN', message: '找不到发送方窗口' } }
+    win.setPosition(Math.round(x), Math.round(y))
+    return { ok: true, data: undefined }
+  })
+
   ipcMain.handle(
     CHANNELS.markerList,
     wrap((mapId: string) => listMarkers(db, mapId))
