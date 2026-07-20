@@ -146,5 +146,11 @@ export default function MapCanvas({ mapId, imageUrl, markers = [], points = [], 
     }
   }, [markers, points, visibleTypes])
 
-  return <div ref={divRef} className={className ?? 'h-[520px] w-full'} />
+  // 外层归 React 管(动态 className 如 pointer-events);内层固定类名交给 Leaflet,
+  // 避免 React 重渲染时把 Leaflet 挂在元素上的类(leaflet-container 等)整体抹掉
+  return (
+    <div className={className ?? 'h-[520px] w-full'}>
+      <div ref={divRef} className="h-full w-full" />
+    </div>
+  )
 }

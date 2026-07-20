@@ -2,6 +2,7 @@ import { useEffect, useState, type CSSProperties } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../../api'
 import MapCanvas from '../../components/MapCanvas'
+import { CloseIcon, MapIcon, MinusIcon, PinIcon } from '../../components/icons'
 import { MARKER_META, MARKER_TYPES } from '../../lib/markers'
 import { useMapImage } from '../../lib/useMapImage'
 import { useOverlayControls } from '../../lib/useOverlayControls'
@@ -44,15 +45,18 @@ export default function MapOverlay() {
   // 只给当前地图有标记的类型显示开关,减少噪音
   const presentTypes = MARKER_TYPES.filter((t) => markers.data?.some((m) => m.type === t))
 
+  // 固定态:除固定按钮外全部禁用鼠标(CSS 层兜底;Electron 下另有系统级穿透)
+  const lockCls = locked ? 'pointer-events-none opacity-40' : ''
+
   // 收起态:只剩一个小图标,点击展开
   if (collapsed) {
     return (
       <button
         onClick={toggleCollapsed}
         title="展开地图标记浮窗"
-        className="flex h-11 w-11 items-center justify-center rounded-md border border-drop/70 bg-panel/90 text-xl backdrop-blur-sm"
+        className="flex h-11 w-11 items-center justify-center rounded-md border border-drop/70 bg-panel/90 text-drop backdrop-blur-sm"
       >
-        🗺️
+        <MapIcon />
       </button>
     )
   }
@@ -69,7 +73,7 @@ export default function MapOverlay() {
           style={noDrag}
           value={mapId}
           onChange={(e) => setMapId(e.target.value)}
-          className={`rounded-sm border border-line bg-panel px-2 py-0.5 text-xs ${locked ? 'opacity-40' : ''}`}
+          className={`rounded-sm border border-line bg-panel px-2 py-0.5 text-xs ${lockCls}`}
         >
           {OVERLAY_MAPS.map((id) => (
             <option key={id} value={id}>
@@ -83,32 +87,32 @@ export default function MapOverlay() {
           style={noDrag}
           onClick={toggleLocked}
           title={locked ? '取消固定(恢复可操作)' : '固定:鼠标穿透,防误触'}
-          className={`rounded-sm px-1.5 text-sm leading-none transition-colors ${
+          className={`pointer-events-auto rounded-sm p-1 leading-none transition-colors ${
             locked ? 'bg-drop/25 text-drop' : 'text-mut hover:text-ink'
           }`}
         >
-          📌
+          <PinIcon filled={locked} />
         </button>
         <button
           style={noDrag}
           onClick={toggleCollapsed}
           title="收起为小图标"
-          className={`px-1 text-base leading-none text-mut transition-colors hover:text-ink ${locked ? 'opacity-40' : ''}`}
+          className={`p-1 leading-none text-mut transition-colors hover:text-ink ${lockCls}`}
         >
-          –
+          <MinusIcon />
         </button>
         <button
           style={noDrag}
           onClick={() => window.close()}
-          className={`px-1 text-mut transition-colors hover:text-danger ${locked ? 'opacity-40' : ''}`}
+          className={`p-1 leading-none text-mut transition-colors hover:text-danger ${lockCls}`}
           aria-label="关闭浮窗"
         >
-          ×
+          <CloseIcon />
         </button>
       </div>
 
       {/* 图层开关:小胶囊,开=类型色描边,关=灰暗 */}
-      <div className="flex flex-wrap items-center gap-1 border-b border-line/60 px-2 py-1">
+      <div className={`flex flex-wrap items-center gap-1 border-b border-line/60 px-2 py-1 ${locked ? 'pointer-events-none' : ''}`}>
         <button
           style={noDrag}
           onClick={toggleAll}
@@ -149,7 +153,7 @@ export default function MapOverlay() {
         imageUrl={img.data}
         markers={markers.data ?? []}
         visibleTypes={visible}
-        className="min-h-0 flex-1"
+        className={`min-h-0 flex-1 ${locked ? 'pointer-events-none' : ''}`}
       />
     </div>
   )

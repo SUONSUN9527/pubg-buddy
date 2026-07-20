@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react'
 import { api } from '../../api'
+import { CloseIcon, MinusIcon, PinIcon, TeamsIcon } from '../../components/icons'
 import { useOverlayControls } from '../../lib/useOverlayControls'
 import type { HudRosterEvent } from '@shared/types'
 
@@ -22,15 +23,18 @@ export default function TeamsOverlay() {
   const aliveTotal = snap?.teams.reduce((s, t) => s + t.alive, 0) ?? 0
   const aliveTeams = snap?.teams.filter((t) => t.alive > 0).length ?? 0
 
+  // 固定态:除固定按钮外全部禁用鼠标(CSS 层兜底;Electron 下另有系统级穿透)
+  const lockCls = locked ? 'pointer-events-none opacity-40' : ''
+
   // 收起态:只剩一个小图标(带存活人数角标),点击展开
   if (collapsed) {
     return (
       <button
         onClick={toggleCollapsed}
         title="展开队伍存活浮窗"
-        className="relative flex h-11 w-11 items-center justify-center rounded-md border border-drop/70 bg-panel/90 text-xl backdrop-blur-sm"
+        className="relative flex h-11 w-11 items-center justify-center rounded-md border border-drop/70 bg-panel/90 text-drop backdrop-blur-sm"
       >
-        ⚔️
+        <TeamsIcon />
         {snap && (
           <span className="hud-num absolute -bottom-0.5 right-0.5 text-[9px] leading-none text-drop">{aliveTotal}</span>
         )}
@@ -54,31 +58,31 @@ export default function TeamsOverlay() {
           style={noDrag}
           onClick={toggleLocked}
           title={locked ? '取消固定(恢复可操作)' : '固定:鼠标穿透,防误触'}
-          className={`rounded-sm px-1 text-[11px] leading-none transition-colors ${
+          className={`pointer-events-auto rounded-sm p-0.5 leading-none transition-colors ${
             locked ? 'bg-drop/25 text-drop' : 'text-mut hover:text-ink'
           }`}
         >
-          📌
+          <PinIcon size={11} filled={locked} />
         </button>
         <button
           style={noDrag}
           onClick={toggleCollapsed}
           title="收起为小图标"
-          className={`px-0.5 text-xs leading-none text-mut transition-colors hover:text-ink ${locked ? 'opacity-40' : ''}`}
+          className={`p-0.5 leading-none text-mut transition-colors hover:text-ink ${lockCls}`}
         >
-          –
+          <MinusIcon size={11} />
         </button>
         <button
           style={noDrag}
           onClick={() => window.close()}
-          className={`px-0.5 text-xs leading-none text-mut transition-colors hover:text-danger ${locked ? 'opacity-40' : ''}`}
+          className={`p-0.5 leading-none text-mut transition-colors hover:text-danger ${lockCls}`}
           aria-label="关闭浮窗"
         >
-          ×
+          <CloseIcon size={11} />
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-1 pb-1">
+      <div className={`min-h-0 flex-1 overflow-y-auto px-1 pb-1 ${locked ? 'pointer-events-none' : ''}`}>
         {!snap || snap.teams.length === 0 ? (
           <div className="px-2 py-4 text-center text-[10px] leading-relaxed text-mut">
             进局后自动显示各队剩余人数
