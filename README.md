@@ -117,6 +117,18 @@ npm run dev          # 启动(dev 端口固定 5199)
 - [ ] MCP Server:接入 Claude 等 LLM,自然语言问"我最近 20 场为什么掉分"
 - [ ] 车队周报机器人
 
+## 📦 更新日志 · Changelog
+
+### v0.2.0(2026-07-20)
+- **游戏内浮窗体验升级** · Overlay UX overhaul
+  - 浮窗可收起为 **36px 可拖动圆形徽章**,原地点击展开(存活徽章带剩余人数角标)/ collapse to a draggable 36px chip, click in place to expand
+  - 新增**固定防误触**:固定后整窗鼠标穿透(系统级 + CSS 双保险),仅固定按钮可点 / pin-lock with true click-through, only the pin stays clickable
+  - 三个控制按钮统一为描边线条图标 / unified stroke-style control icons
+  - 地图最小缩放放开至 1/16,修复初始化适配与透明窗白底等多个渲染问题 / wider zoom range & several rendering fixes
+
+### v0.1.0(2026-07-19)
+- 首个发布 · Initial release:玩家查询、仪表盘、赛后自动报告、车队对比、地图标记(487 个 CV 提取内置点位 + 8K 官方底图)、Telemetry 分析(死亡画像/跳点复盘)、双浮窗雏形、NSIS 安装包自动构建
+
 ## ⚖️ 声明
 
 - 本项目为**个人自用工具**,与 KRAFTON / PUBG Corp. 无任何关联,非官方项目
