@@ -41,6 +41,8 @@ export class OverlayManager {
       minHeight: kind === 'teams' ? 110 : 380,
       frame: false,
       transparent: true,
+      // 显式全透明背景:规避 macOS 透明窗口在 setBounds 缩放后变白底的已知问题
+      backgroundColor: '#00000000',
       resizable: true,
       skipTaskbar: true,
       hasShadow: false,

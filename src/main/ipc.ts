@@ -136,12 +136,16 @@ export function registerIpc(deps: IpcDeps): void {
       win.__normalBounds = win.getBounds()
       win.setMinimumSize(CHIP, CHIP)
       win.setBounds({ x, y, width: CHIP, height: CHIP })
+      win.setResizable(false) // 36px 小图标不该被拉伸,也规避透明窗口 resize 白底问题
     } else {
+      win.setResizable(true)
       const n = win.__normalBounds
       if (n) win.setBounds({ x, y, width: n.width, height: n.height })
       const [mw, mh] = win.__minSize ?? [CHIP, CHIP]
       win.setMinimumSize(mw, mh)
     }
+    // 缩放后重申全透明背景(macOS 上 setBounds 可能重置为白底)
+    win.setBackgroundColor('#00000000')
     return { ok: true, data: undefined }
   })
 

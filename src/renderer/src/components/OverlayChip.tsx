@@ -65,13 +65,14 @@ export default function OverlayChip({
   }
 
   return (
+    // 固定 36px,与收起后的窗口尺寸严格一致,不依赖父容器高度
     <button
       title={title}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
-      className="relative flex h-full w-full cursor-grab select-none items-center justify-center rounded-full
-        border border-drop/50 bg-panel/80 text-drop shadow-lg backdrop-blur-sm transition-colors
+      className="relative flex h-9 w-9 cursor-grab select-none items-center justify-center rounded-full
+        border border-drop/50 bg-panel/80 text-drop backdrop-blur-sm transition-colors
         hover:border-drop hover:bg-panel active:cursor-grabbing"
     >
       {children}
